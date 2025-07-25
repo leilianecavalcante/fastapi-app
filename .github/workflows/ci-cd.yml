@@ -32,8 +32,8 @@ jobs:
     - name: Checkout k8s-manifests repo
       uses: actions/checkout@v3
       with:
-        repository: seu-usuario/k8s-manifests
-        token: ${{ secrets.K8S_MANIFESTS_PAT }}  # Token com permissão de escrita no repo k8s-manifests
+        repository: leilianecavalcante/k8s-manifests    # <- Substitua aqui pelo seu usuário e nome do repo
+        token: ${{ secrets.K8S_MANIFESTS_PAT }}          # Certifique-se que este secret está criado
         path: k8s-manifests
 
     - name: Atualizar deployment.yaml com nova tag da imagem
