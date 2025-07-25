@@ -1,0 +1,57 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout fastapi-app
+        uses: actions/checkout@v4
+
+      - name: Login no Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+
+      - name: Build e push da imagem Docker
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
+            ${{ secrets.DOCKER_USERNAME }}/fastapi-app:${{ github.sha }}
+
+      - name: Checkout repo dos manifests Kubernetes
+        uses: actions/checkout@v4
+        with:
+          repository: seu-usuario/k8s-manifests
+          token: ${{ secrets.TOKEN_GITHUB }}   # <<< ALTERAÇÃO AQUI (antes: GITHUB_PAT)
+          path: k8s-manifests
+
+      - name: Atualizar imagem no manifesto
+        run: |
+          cd k8s-manifests
+          sed -i "s|image: .*/fastapi-app:.*|image: ${{ secrets.DOCKER_USERNAME }}/fastapi-app:${{ github.sha }}|g" deployment.yaml
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          git add deployment.yaml
+          git commit -m "Atualizar imagem fastapi-app para ${{ github.sha }}" || echo "Nada para commitar"
+
+      - name: Criar Pull Request para atualização dos manifests
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.TOKEN_GITHUB }}   # <<< ALTERAÇÃO AQUI (antes: GITHUB_PAT)
+          commit-message: "Atualizar imagem fastapi-app para ${{ github.sha }}"
+          title: "Atualizar imagem fastapi-app para ${{ github.sha }}"
+          body: "Atualização automática da imagem Docker fastapi-app."
+          branch: update-image-${{ github.sha }}
+          base: main
+          delete-branch: true
+          path: k8s-manifests
