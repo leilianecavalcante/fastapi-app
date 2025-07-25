@@ -4,4 +4,4 @@ app = FastAPI()
 
 @app.get("/")
 async def home():
-    return {"msg": "Atualização feita! ela está funcionando! 🎉"}
+    return {"msg": "Atualização feita! está funcionando! 🎉"}
