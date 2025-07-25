@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout fastapi-app repo
       uses: actions/checkout@v3
 
     - name: Set up Docker Buildx
@@ -28,3 +28,25 @@ jobs:
         context: .
         push: true
         tags: leeh1012/fastapi-app-app:latest,leeh1012/fastapi-app-app:${{ github.sha }}
+
+    - name: Checkout k8s-manifests repo
+      uses: actions/checkout@v3
+      with:
+        repository: seu-usuario/k8s-manifests
+        token: ${{ secrets.K8S_MANIFESTS_PAT }}  # Token com permissão de escrita no repo k8s-manifests
+        path: k8s-manifests
+
+    - name: Atualizar deployment.yaml com nova tag da imagem
+      run: |
+        sed -i "s|image: leeh1012/fastapi-app-app:.*|image: leeh1012/fastapi-app-app:${{ github.sha }}|" k8s-manifests/deployment.yaml
+
+    - name: Criar Pull Request para atualizar manifest
+      uses: peter-evans/create-pull-request@v4
+      with:
+        token: ${{ secrets.K8S_MANIFESTS_PAT }}
+        commit-message: Atualiza imagem fastapi-app para ${{ github.sha }}
+        branch: update-image-${{ github.sha }}
+        title: Atualiza imagem fastapi-app para ${{ github.sha }}
+        body: Atualização automática da imagem via GitHub Actions
+        base: main
+        path: k8s-manifests/deployment.yaml
