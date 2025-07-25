@@ -32,8 +32,8 @@ jobs:
     - name: Checkout k8s-manifests repo
       uses: actions/checkout@v3
       with:
-        repository: leilianecavalcante/k8s-manifests    # <- Substitua aqui pelo seu usuário e nome do repo
-        token: ${{ secrets.K8S_MANIFESTS_PAT }}          # Certifique-se que este secret está criado
+        repository: leilianecavalcante/k8s-manifests
+        token: ${{ secrets.K8S_MANIFESTS_PAT }}
         path: k8s-manifests
 
     - name: Atualizar deployment.yaml com nova tag da imagem
@@ -49,4 +49,4 @@ jobs:
         title: Atualiza imagem fastapi-app para ${{ github.sha }}
         body: Atualização automática da imagem via GitHub Actions
         base: main
-        path: k8s-manifests/deployment.yaml
+        path: k8s-manifests
