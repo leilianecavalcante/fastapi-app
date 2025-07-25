@@ -27,4 +27,4 @@ jobs:
       with:
         context: .
         push: true
-        tags: leeh1012/fastapi-app:latest,leeh1012/fastapi-app:${{ github.sha }}
+        tags: leeh1012/fastapi-app-app:latest,leeh1012/fastapi-app-app:${{ github.sha }}
