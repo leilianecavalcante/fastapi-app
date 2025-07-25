@@ -3,5 +3,5 @@ from fastapi import FastAPI
 app = FastAPI()
 
 @app.get("/")
-async def home():
-    return {"msg": "Atualização feita! está funcionando! 🎉"}
+def read_root():
+    return {"message": "Deploy automático com ArgoCD funcionando 🎉"}
