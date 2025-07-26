@@ -363,6 +363,8 @@ Recarregue a página http://localhost:8081/. A nova mensagem deve aparecer:
 
 Parabéns! Você configurou com sucesso um pipeline CI/CD completo com GitOps.
 
+
+
 ## 👨‍💻 Autor
 
 **Leeh Cavalcante**
