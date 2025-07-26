@@ -300,7 +300,7 @@ kubectl port-forward svc/fastapi-app-service 8081:80
 Acesse no navegador: http://localhost:8081/. Você deverá ver a mensagem inicial:
 
 ```json
-{ "msg": "Olá Mundo! Esta é uma mensagem inicial." }
+{ "msg": "Hello world Compass UOL" }
 ```
 
 ![](/assets/hello%20compass.png)
@@ -321,7 +321,7 @@ app = FastAPI()
 
 @app.get("/")
 async def home():
-    return {"msg": "Atualização feita! Tudo funcionando! 🎉"}
+    return {"msg": "Hello Compass! o teste está funcionando! 🎉"}
 ```
 
 Faça o commit e push para a branch `main`:
@@ -354,7 +354,7 @@ Com isso, o ArgoCD irá sincronizar automaticamente com a branch principal, conf
 Recarregue a página http://localhost:8081/. A nova mensagem deve aparecer:
 
 ```json
-{ "msg": "Atualização feita! Tudo funcionando! 🎉" }
+{ "msg":"Hello Compass! o teste está funcionando! 🎉" }
 ```
 
 ---
@@ -368,8 +368,8 @@ Parabéns! Você configurou com sucesso um pipeline CI/CD completo com GitOps.
 ## 👨‍💻 Autor
 
 **Leeh Cavalcante**
-- **LinkedIn**: linkedin.com/in/seu-perfil
-- **Email**: leeh@email.com
+- **LinkedIn**: https://www.linkedin.com/in/leiliane-cavalcante-5313881b3/
+- **Email**: liliannoguei001@gmail.com
 
 ---
 
