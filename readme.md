@@ -6,6 +6,14 @@
 
 Este projeto implementa uma pipeline de CI/CD completa e automatizada, demonstrando um fluxo de trabalho **GitOps** moderno. A aplicação, desenvolvida em **FastAPI**, é containerizada com **Docker**, integrada via **GitHub Actions** e implantada continuamente em um cluster **Kubernetes** gerenciado pelo **ArgoCD**.
 
+## 📚 Sumário
+- [Arquitetura](#arquitetura)
+- [Fluxo do Pipeline](#fluxo-do-pipeline)
+- [Passo a Passo Completo](#passo-a-passo-completo)
+- [Configurar ArgoCD](#4-configurar-argocd)
+- [Testar o Fluxo](#5-testar-o-fluxo-completo)
+- [Autor](#-autor)
+- [Licença](#-licença)
 
 ## Arquitetura
 
@@ -154,6 +162,18 @@ No repositório `fastapi-app`, vá em `Settings > Secrets and variables > Action
 | `DOCKER_ACCESS_TOKEN` | Um Token de Acesso do Docker Hub. |
 | `GITHUB_PAT`          | Um Personal Access Token (classic) com escopo `repo`. |
 
+![](/assets/secrett.png)
+
+## Criar PAT 
+Para algumas ações do github actions é necessário o PAT, para criá-lo siga:
+
+Entrar em configurações da sua conta e clicar em "Developer Settings"
+
+e crie um Personal Acess Token (classic) com essas configurações abaixo:
+
+![](/assets/tok%20pat.png)
+
+
 ### 3. Criar os Manifestos Kubernetes
 
 Clone o repositório `k8s-manifests` e crie os arquivos de manifesto. **Lembre-se de substituir `<seu-usuario-dockerhub>` pelo seu nome de usuário do Docker Hub.**
@@ -228,6 +248,8 @@ O usuário padrão é `admin`. Obtenha a senha com o comando:
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode
 ```
 
+![](/assets/argocd%20img%201.png)
+
 #### 4.4. Criar a Aplicação no ArgoCD
 
 1.  Na UI do ArgoCD, clique em **NEW APP**.
@@ -243,6 +265,27 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
     -   **Cluster URL**: `https://kubernetes.default.svc`
     -   **Namespace**: `default`
 5.  Clique em **CREATE**. O ArgoCD irá clonar o repositório e aplicar os manifestos.
+
+![](/assets/fastaoi%20argo.png)
+
+6.   após CREATE você deverá ver algo como: 
+
+   ![](/assets/argonew.png)
+
+   Com isso, o ArgoCD irá sincronizar com o repositório.
+
+Clicando em fastapi-app dentro do argocd você verá algo como: 
+
+![](/assets/argofinal.png)
+
+Caso queira verificar seus pods no terminal rode o comando 
+
+```bash
+kubectl get pods -n argocd
+```
+Após o comando resultados devem ser Running como abaixo:
+
+![](/assets/pds%20rodando.png)
 
 ### 5. Testar o Fluxo Completo
 
@@ -260,7 +303,14 @@ Acesse no navegador: http://localhost:8081/. Você deverá ver a mensagem inicia
 { "msg": "Olá Mundo! Esta é uma mensagem inicial." }
 ```
 
-#### 5.2. Modificar a Aplicação para Testar a Atualização
+![](/assets/hello%20compass.png)
+
+
+Acesse no navegador: http://localhost:8081/docs para ver a API
+
+![](/assets/getdocs.png)
+
+# Modificar a Aplicação para Testar 
 
 No repositório `fastapi-app`, edite o arquivo `app.py`:
 
@@ -281,12 +331,23 @@ git add app.py
 git commit -m "Mensagem atualizada para teste de CI/CD"
 git push origin main
 ```
+Após a alteração no main.py, será necessário aceitar o Pull Request criado automaticamente pelo GitHub Actions. Para isso, acesse o repositório de manifests (app-manifests), vá até a aba Pull Requests e aceite a solicitação.
+
+![](/assets/primeiro%20pull.png)
+
+
+### Ao acessar o Pull Request criado, clique no botão "Merge". Isso aplicará as modificações na branch principal (main) e encerrará automaticamente a branch utilizada para o PR.
 
 #### 5.3. Acompanhar o Pipeline
 
 -   Vá para a aba "Actions" no repositório `fastapi-app` para ver o pipeline rodando.
 -   Após a conclusão, verifique o repositório `k8s-manifests` e veja que um novo commit foi feito pelo "GitHub Actions Bot".
 -   Na UI do ArgoCD, observe que ele detectará a mudança (Out of Sync) e iniciará a sincronização automaticamente, atualizando os pods no cluster.
+
+
+Com isso, o ArgoCD irá sincronizar automaticamente com a branch principal, conforme configurado anteriormente. Após alguns minutos, a nova versão da aplicação estará em execução, e a alteração na mensagem poderá ser visualizada conforme mostrado na imagem a seguir.
+
+![](/assets/argofinal%202.png)
 
 #### 5.4. Verificar a Atualização no Navegador
 
@@ -298,5 +359,19 @@ Recarregue a página http://localhost:8081/. A nova mensagem deve aparecer:
 
 ---
 
+![](/assets/image%20final.png)
+
 Parabéns! Você configurou com sucesso um pipeline CI/CD completo com GitOps.
 
+## 👨‍💻 Autor
+
+**Leeh Cavalcante**
+- **LinkedIn**: linkedin.com/in/seu-perfil
+- **Email**: leeh@email.com
+
+---
+
+## 📄 Licença
+
+Distribuído sob a licença MIT. Veja LICENSE para mais informações.
+   esse é meu readme vou te mandar algumas coisas e a gente faz algumas alterações juntas
